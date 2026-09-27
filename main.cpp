@@ -4,9 +4,9 @@ namespace fs = std::filesystem;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        fprintf(stderr, "Nebyl zadan vstupni soubor!");
+        fprintf(stderr, "Nebyl zadan vstupni soubor nebo flag (-a, -s, -l, -f)! ");
         return -1;
     }
     std::string mode;
@@ -14,7 +14,10 @@ int main(int argc, char *argv[])
 
     if (mode == "-a")
     {
-        log_acess(argv[2]);
+        if (log_acess(argv[2]))
+            printf("soubor %s lze cist: ANO\n", argv[2]);
+        else
+            printf("soubor %s lze cist: NE\n", argv[2]);
     }
     if (mode == "-s")
     {
