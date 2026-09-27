@@ -18,7 +18,12 @@ void log_stat(std::string path)
 {
     struct stat buf;
 
-    stat(path.c_str(), &buf);
+    if (stat(path.c_str(), &buf) < 0)
+    {
+        fprintf(stderr, "Chyba stat(%s): %s\n", path.c_str(), strerror(errno));
+        return;
+    }
+
     fprintf(stdout, "Soubor: %s\nvelikost souboru: %lu\nUID: %d\nGID: %d\nHardlinky: %lu\n", path.c_str(), buf.st_size, buf.st_uid, buf.st_gid, buf.st_nlink);
 }
 
@@ -27,7 +32,12 @@ void log_lstat(std::string path)
     struct stat buf;
     std::string out;
 
-    lstat(path.c_str(), &buf);
+    if (lstat(path.c_str(), &buf) < 0)
+    {
+        fprintf(stderr, "Chyba lstat(%s): %s\n", path.c_str(), strerror(errno));
+        return;
+    }
+
     if (S_ISREG(buf.st_mode))
         out = "regular";
     else if (S_ISDIR(buf.st_mode))
@@ -51,6 +61,13 @@ void log_fstat(std::string path)
 {
     struct stat buf;
     int file = open(path.c_str(), O_RDWR);
+
+    if (file < 0)
+    {
+        fprintf(stderr, "Chyba open(%s): %s\n", path.c_str(), strerror(errno));
+        return;
+    }
+
     fstat(file, &buf);
     fprintf(stdout, "soubor: %s\nvelikost: %ld\n cislo inodu: %lu\n", path.c_str(), buf.st_size, buf.st_ino);
     close(file);
